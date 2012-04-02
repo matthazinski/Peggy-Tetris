@@ -89,7 +89,7 @@ int i = 19;
 						mBoard[i-k][BOARD_WIDTH] = mBoard [i-1-k][BOARD_WIDTH];
 						}
 					}
-			i++;
+			i--;
 		}
 	//special case for top row, reset to zeroes
 	if field[0][10] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
