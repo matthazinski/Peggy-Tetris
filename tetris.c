@@ -1,9 +1,12 @@
-#define BOARD_WIDTH 	10
-#define BOARD_HEIGHT	20
+/* Note: for indents, use 4-character spaces, NOT tabs. */
+
+
+#define BOARD_WIDTH     10
+#define BOARD_HEIGHT    20
 
 void loop() {
-	
-	
+    
+    
     srand(time(NULL));
     int random = rand()%7;
     int[][] block;
@@ -11,58 +14,58 @@ void loop() {
     switch(random){
     
     case 0:
-    	block = a;
+        block = a;
     case 1:
         block = b;
     case 2:
-    	block = c;
+        block = c;
     case 3:
-    	block = d;
+        block = d;
     case 4:
-    	block = e;
+        block = e;
     case 5:
-    	block = f;
+        block = f;
     case 6:
-    	block = g;
+        block = g;
     }
     
-    // line
+    /*  line */
     int a[4][4] = {{0, 0, 0, 0},
-		   {1, 1, 1, 1}.
-		   {0, 0, 0, 0},
-		   {0, 0, 0, 0}};
+           {1, 1, 1, 1}.
+           {0, 0, 0, 0},
+           {0, 0, 0, 0}};
 
-    // square
+    /* square */
     int b[4][4] = {{0,0,0,0},
-		   {0,1,1,0},
-		   {0,1,1,0},
-		   {0,0,0,0}};
+           {0,1,1,0},
+           {0,1,1,0},
+           {0,0,0,0}};
 
-    // Z
+    /* Z */
     int c[4][4] = {{0,0,0,0},
                    {0,1,1,0},
                    {0,0,1,1},
                    {0,0,0,0}};
 
-    // S
+    /* S */
     int d[4][4] = {{0,0,0,0},
                    {0,0,1,1},
                    {0,1,1,0},
                    {0,0,0,0}};
 
-    // L
+    /* L */
     int e[4][4] = {{0,0,1,0},
                    {0,0,1,0},
                    {0,0,1,1},
                    {0,0,0,0}};
 
-    // reverse L
+    /* reverse L */
     int f[4][4] = {{0,0,1,0},
                    {0,0,1,0},
                    {0,1,1,0},
                    {0,0,0,0}};
 
-    // T
+    /* T */
     int g[4][4] = {{0,0,1,0},
                    {0,1,1,1},
                    {0,0,0,0},
@@ -72,35 +75,28 @@ int mBoard [BOARD_HEIGHT][BOARD_WIDTH]; //board for tetris
 
 
 //if a row is full, moves all rows down 1 position... I hope...
-void fullRow(int mBoard[][])
+void fullRow(int mBoard[][]) {
+    int i = 19;
 
-{
-int i = 19;
-
-	while ( 1 < i )
-		{
-			int k = 0;
-				//if row is full
-				if mBoard[i][BOARD_WIDTH] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-					{
-						for (k = 0; k < (19 - i); k++ )	
-						{
-						//set full row to row above it, etc.
-						mBoard[i-k][BOARD_WIDTH] = mBoard [i-1-k][BOARD_WIDTH];
-						}
-					}
-			i--;
-		}
-	//special case for top row, reset to zeroes
-	if field[0][10] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-		field[0][10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    while ( 1 < i )   {
+            int k = 0;
+            //if row is full
+            if mBoard[i][BOARD_WIDTH] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}  {
+                for (k = 0; k < (19 - i); k++ )  {
+                //set full row to row above it, etc.
+                    mBoard[i-k][BOARD_WIDTH] = mBoard [i-1-k][BOARD_WIDTH];
+                }
+            }
+            i--;
+    }
+    //special case for top row, reset to zeroes
+    if field[0][10] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+        field[0][10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 }
     
-bool Board::IsGameOver()
-{
+bool Board::IsGameOver() {
     //The game will be over when the first line has blocks in it
-    for (int i = 0; i < BOARD_WIDTH; i++)
-    {
+    for (int i = 0; i < BOARD_WIDTH; i++) {
         if (mBoard[i][0] == POS_FILLED) return true; //checks if the first row of board is "filled"
     }
  
