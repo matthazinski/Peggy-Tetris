@@ -1,0 +1,14 @@
+FIXME:
+- IsGameOver() also needs to NOT return true if there is a new block falling downwards that is not impeded by other blocks on the board --mhazinsk
+- There is no class support in C. Board should be an integer 2D array, not a class --mhazinsk
+
+Formatting guidelines:
+- Limit lines to ~80 characters --mhazinsk
+- Use four-space indents, NOT tabs --mhazinsk
+
+Potential future problems:
+- The Peggy is limited to 14 kB of (compiled) flash memoruy
+- 16 MHz (?) CPU speed 
+
+
+ 
