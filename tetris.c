@@ -77,9 +77,18 @@ void loop() {
                    {0,0,0,0},
                    {0,0,0,0}};
     
+int mBoard [BOARD_WIDTH][BOARD_HEIGHT]; //board for tetris    
     
-    
-    
+bool Board::IsGameOver()
+{
+    //The game will be over when the first line has blocks in it
+    for (int i = 0; i < BOARD_WIDTH; i++)
+    {
+        if (mBoard[i][0] == POS_FILLED) return true; //checks if the first row of board is "filled"
+    }
+ 
+    return false;
+}    
     
     
     
