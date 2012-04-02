@@ -68,7 +68,32 @@ void loop() {
                    {0,0,0,0},
                    {0,0,0,0}};
     
-int mBoard [BOARD_WIDTH][BOARD_HEIGHT]; //board for tetris    
+int mBoard [BOARD_HEIGHT][BOARD_WIDTH]; //board for tetris    
+
+
+//if a row is full, moves all rows down 1 position... I hope...
+void fullRow(int mBoard[][])
+
+{
+int i = 0;
+
+	while (i = 19; 1 < i; i-- )
+		{
+			int k = 0;
+				//if row is full
+				if mBoard[i][BOARD_WIDTH] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+					{
+						for (k = 0; k < (19 - i); k++ )	
+						{
+						//set full row to row above it, etc.
+						mBoard[i-k][BOARD_WIDTH] = mBoard [i-1-k][BOARD_WIDTH];
+						}
+					}
+		}
+	//special case for top row, reset to zeroes
+	if field[0][10] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+		field[0][10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+}
     
 bool Board::IsGameOver()
 {
