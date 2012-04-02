@@ -1,38 +1,29 @@
+#define BOARD_WIDTH 	10
+#define BOARD_HEIGHT	20
+
 void loop() {
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	srand(time(NULL));
+    srand(time(NULL));
     int random = rand()%7;
-    
-    switch(random){}
+    int[][] block;
+
+    switch(random){
     
     case 0:
-    	char block='a';
+    	block = a;
     case 1:
-    	char block='b';
+        block = b;
     case 2:
-    	char block='c';
+    	block = c;
     case 3:
-    	char block='d';
+    	block = d;
     case 4:
-    	char block='e';
+    	block = e;
     case 5:
-    	char block='f';
+    	block = f;
     case 6:
-    	char block='g';
+    	block = g;
     }
     
     // line
