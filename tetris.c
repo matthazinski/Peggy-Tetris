@@ -1,8 +1,19 @@
 /* Note: for indents, use 4-character spaces, NOT tabs. */
 
-
+#include <Peggy2.h>
 #define BOARD_WIDTH     10
 #define BOARD_HEIGHT    20
+
+Peggy2 frame; // Stores all pixels displayed on the Peggy
+// I'm assuming we have a Peggy2.
+
+
+void setup() {
+    // This function is called when the Arduino starts up
+    frame.HardwareInit();
+    frame.Clear();
+}
+
 
 void loop() {
     
@@ -71,7 +82,10 @@ void loop() {
                    {0,0,0,0},
                    {0,0,0,0}};
     
-int mBoard [BOARD_HEIGHT][BOARD_WIDTH]; //board for tetris    
+    int mBoard [BOARD_HEIGHT][BOARD_WIDTH]; //board for tetris    
+
+
+}
 
 
 //if a row is full, moves all rows down 1 position... I hope...
@@ -104,9 +118,18 @@ bool Board::IsGameOver() {
 }    
     
     
-    
-
-
-
+void setFrameFromBoard(int board[][]) {
+    /* This takes the board[][] parameter (which must be a 25x25 array) and draws
+       it on the Peggy display */
+    for (int i = 0; i < 24; i++) {
+        for (int j = 0; j < 24; j++) {
+            frame.WritePoint(i, j, board[i][j]);
+        }
+    }  
+    frame.RefreshAll(1);
 }
+
+
+
+
 
