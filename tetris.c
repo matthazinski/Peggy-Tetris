@@ -95,7 +95,7 @@ void fullRow(int mBoard[][]) {
     while ( 1 < i )   {
             int k = 0;
             //if row is full
-            if mBoard[i][BOARD_WIDTH] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}  {
+            if (Board[i][BOARD_WIDTH] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1})  {
                 for (k = 0; k < (19 - i); k++ )  {
                 //set full row to row above it, etc.
                     mBoard[i-k][BOARD_WIDTH] = mBoard [i-1-k][BOARD_WIDTH];
@@ -104,8 +104,8 @@ void fullRow(int mBoard[][]) {
             i--;
     }
     //special case for top row, reset to zeroes
-    if field[0][10] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-        field[0][10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    if (field[0][10] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1})
+        field[0][10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 }
     
 bool Board::IsGameOver() {
