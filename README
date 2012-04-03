@@ -6,4 +6,6 @@ Potential future problems:
 - The Peggy is limited to 14 kB of (compiled) flash memory -- can probably replace with ATMega644
 - 16 MHz (?) CPU speed 
 - No spare output pins -- all communications must be over serial, and the ethernet shield is not supported
- 
+
+Relevant documentation:
+- http://www.evilmadscientist.com/article.php/PeggyArdLib 
