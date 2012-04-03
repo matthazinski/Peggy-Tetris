@@ -128,6 +128,54 @@ void setFrameFromBoard(int board[][]) {
     }  
     frame.RefreshAll(1);
 }
+//rotates a peice clockwise
+void rotateCW(int tetromino[4][4])
+{
+    int temp1,temp2,temp3;
+	temp1 = tetromino[1][1];
+	temp2 = tetromino[1][2];
+	temp3 = tetromino[2][2];
+	tetromino[1][1] = tetromino[2][1];
+	tetromino[1][2] = temp1;
+	tetromino[2][2] = temp2;
+	tetromino[2][1] = temp3;
+	for(int i=0;i<4;i++)
+	{
+		temp1 = tetromino[0][i];
+		temp2 = tetromino[i][3];
+		temp3 = tetromino[3][3-i];
+		tetromino[0][i] = tetromino[3-i][0];
+		tetromino[i][3] = temp1;
+		tetromino[3][3-i] = temp2;
+		tetromino[3-i][0] = temp3;
+	}
+	return;
+}
+
+
+//rotates a peice counter clockwise
+void rotateCCW(int tetromino[4][4])
+{
+	int temp1,temp2,temp3;
+	temp3 = tetromino[1][1];
+	temp2 = tetromino[2][1];
+	temp1 = tetromino[2][2];
+	tetromino[1][1] = tetromino[1][2];
+	tetromino[2][1] = temp3;
+	tetromino[2][2] = temp2;
+	tetromino[1][2] = temp1;
+	for(int i=0;i<4;i++)
+	{
+		temp3 = tetromino[0][i];
+		temp2 = tetromino[i][3];
+		temp1 = tetromino[3][3-i];
+		tetromino[3][3-i] = tetromino[3-i][0];
+		tetromino[i][3] = temp1;
+		tetromino[0][i] = temp2;
+		tetromino[3-i][0] = temp3;
+	}
+	return;
+}
 
 
 
