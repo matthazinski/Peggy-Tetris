@@ -108,14 +108,15 @@ void fullRow(int mBoard[][]) {
         field[0][10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 }
     
-bool Board::IsGameOver() {
-    //The game will be over when the first line has blocks in it
-    for (int i = 0; i < BOARD_WIDTH; i++) {
-        if (mBoard[i][0] == POS_FILLED) return true; //checks if the first row of board is "filled"
+void mBoard::GameOver(){
+    int i;
+    for(i=0; i<200; i++) {  //for when the area is over or equal to 200, game starts over. 10x20
+        if(area[i]!=EMPTY) {
+            area[i]|=BREAK;
+        }
     }
- 
-    return false;
-}    
+}
+    
     
     
 void setFrameFromBoard(int board[][]) {
