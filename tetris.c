@@ -123,7 +123,7 @@ void setFrameFromBoard(int board[][]) {
        it on the Peggy display */
     for (int i = 0; i < 24; i++) {
         for (int j = 0; j < 24; j++) {
-            frame.WritePoint(i, j, board[i][j]);
+            frame.WritePoint(i, j, board[i][j] * 15);
         }
     }  
     frame.RefreshAll(1);
