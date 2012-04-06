@@ -97,11 +97,13 @@ void fullRow(int mBoard[][]) {
     while ( 1 < i )   {
             int k = 0;
             //if row is full
-            if (Board[i][BOARD_WIDTH] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1})  {
+            if (mBoard[i][BOARD_WIDTH] == {1, 1, 1, 1, 1, 1, 1, 1, 1, 1})  {
                 for (k = 0; k < (19 - i); k++ )  {
                 //set full row to row above it, etc.
                     mBoard[i-k][BOARD_WIDTH] = mBoard [i-1-k][BOARD_WIDTH];
                 }
+                //reset top row to compensate for row we deleted
+                mBoard[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
             }
             i--;
     }
