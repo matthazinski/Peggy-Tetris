@@ -1,41 +1,29 @@
 /* Note: for indents, use 4-character spaces, NOT tabs. */
 
-#include <Peggy2.h>
 #define BOARD_WIDTH     10
 #define BOARD_HEIGHT    20
 
-void setup() {
-    // This function is called when the Arduino starts up
-    frame.HardwareInit();
-    frame.Clear();
-    setFrameFromBoard(titleScreen); 
-    // TODO wait for user input, then frame.Clear()
-}
+void fullRow(int[][]);
+void rotateCW(int[][]);
+void rotateCCW(int[][]);
 
 
-void loop() {
-    
+int main() {
+
     
     srand(time(NULL));
     int random = rand()%7;
     int[][] block;
 
-    switch(random){
-    
-    case 0:
-        block = a;
-    case 1:
-        block = b;
-    case 2:
-        block = c;
-    case 3:
-        block = d;
-    case 4:
-        block = e;
-    case 5:
-        block = f;
-    case 6:
-        block = g;
+    switch(random) {
+
+        case 0: block = a;
+        case 1: block = b;
+        case 2: block = c;
+        case 3: block = d;
+        case 4: block = e;
+        case 5: block = f;
+        case 6: default: block = g;
     }
     
     /* I */
@@ -82,7 +70,7 @@ void loop() {
     
     int mBoard [BOARD_HEIGHT][BOARD_WIDTH]; //board for tetris    
 
-
+    return 0;
 }
 
 
@@ -144,7 +132,7 @@ void rotateCW(int tetromino[4][4])
     return;
 }
 
-
+// Likely unnecessary function
 //rotates a piece counter clockwise
 void rotateCCW(int tetromino[4][4])
 {

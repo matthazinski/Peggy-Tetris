@@ -41,7 +41,11 @@ void setup() {
 
 
 void loop() {
-
+    setFrameFromBoard(titleScreen);
+    // Wait for user input
+    // Play a game of tetris
+    // Display high score
+    // Wait for user input
 }
 
 
