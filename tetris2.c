@@ -62,11 +62,8 @@ void printArray(int* array, int height, int width) {
 }
 
 
-/*
- * Determines if game is lost, then shifts cells down and updates the
- * display
- */
-int checkBoard() {
+/* Determines if game is lost, then shifts cells down and updates score */
+ int checkBoard() {
     /* 
      * Check to see if the user has lost the game (i.e. tiles are in the four
      * hidden rows
@@ -93,7 +90,6 @@ int checkBoard() {
 
         if (sum == 10) {
             points = points + 100;  
-            printf("Points for %d: %d\n", i, points);
         }
         else {
             for (j = 0; j < 10; j++) {
