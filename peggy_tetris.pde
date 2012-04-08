@@ -1,4 +1,5 @@
 #include <Peggy2.h>
+// Don't include tetris.c, Arduino links it automatically
 
 Peggy2 frame; /* Stores all pixels displayed on the Peggy */
 char titleScreen[][];
