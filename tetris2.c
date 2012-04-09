@@ -137,7 +137,7 @@ void setRandomTile() {
 
     /* Move the new board back to the fixed board */
     for (i = 0; i < 24; i++) {
-        for (j = 0; j < 23; j++) {
+        for (j = 0; j < 10; j++) {
             fixed[i][j] = newBoard[i][j];
         }
     }
