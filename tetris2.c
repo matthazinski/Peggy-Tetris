@@ -19,19 +19,31 @@ int fixed [24][10];   /* Blocks that are not moving */
 int moving [24][10]; /* The moving block */
 int points = 0;
 
+/* Defines the default position of tetrominos in the moving array */
+typedef struct {
+    int a_row, a_col;
+    int b_row, b_col;
+    int c_row, c_col;
+    int d_row, d_col;
+} Tetromino;
+
+Tetromino I, L, J, S, Z, O, T; 
 
 /*
  * At the moment, the main() function is primarily used for testing and
  * debugging. 
  */
 int main() {
+    /* Clear both boards */ 
     int i, j;
     for (i = 0; i < 24; i++) {
         for (j = 0; j < 10; j++) {
             fixed[i][j] = 0;
+            moving[i][j] = 0;
         }
     }
 
+    /* Debugging info */
     for (j = 0; j < 10; j++) {
         fixed[10][j] = 1;
     }
@@ -43,6 +55,17 @@ int main() {
     printArray(&fixed, 24, 10);
     printf("Points: %d \n", points);
     
+    
+    /* Initialize tetrominos */
+    I = {3, 3,  3, 4,  3, 5,  3, 6};
+    L = {1, 4,  2, 4,  3, 4,  3, 5};
+    J = {1, 5,  2, 5,  3, 5,  3, 4};
+    S = {2, 4,  2, 5,  3, 4,  3, 3};
+    Z = {3, 4,  3, 5,  2, 4,  2, 3};
+    O = {2, 4,  2, 5,  3, 4,  3, 5};
+    T = {3, 4,  3, 5,  2, 5,  3, 6};
+
+
     return 0;
 }
 
@@ -61,12 +84,19 @@ void printArray(int* array, int height, int width) {
     }
 }
 
+/* Add a random tile alligned to the top 4 rows of the moving array */
+void setRandomTile() {
+
+
+}
+
+
 
 /* Determines if game is lost, then shifts cells down and updates score */
  int checkBoard() {
     /* 
      * Check to see if the user has lost the game (i.e. tiles are in the four
-     * hidden rows
+     * hidden rows)
      */
     int i;
     int j;
