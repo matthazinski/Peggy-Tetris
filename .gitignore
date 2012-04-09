@@ -37,3 +37,6 @@ Thumbs.db
 ##########################
 *.swp               # For vim
 
+# Documentation #
+#################
+*.pdf
