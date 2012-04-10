@@ -2,12 +2,7 @@
 // Don't include tetris.c, Arduino links it automatically
 
 Peggy2 frame; /* Stores all pixels displayed on the Peggy */
-char titleScreen[][];
-
-void setup() {
-
-    titleScreen[25][25] = /* "TETRIS \n START" */
-    {
+/*char titleScreen[25][25] = {
         {0, 15, 15, 15, 0, 15, 15, 15, 0, 15, 15, 15, 0, 15, 15, 0, 0, 15, 15, 15, 0, 0, 15, 15, 0},
         {0, 0, 15, 0, 0, 15, 0, 0, 0, 0, 15, 0, 0, 15, 0, 15, 0, 0, 15, 0, 0, 15, 0, 0, 0},
         {0, 0, 15, 0, 0, 15, 15, 0, 0, 0, 15, 0, 0, 15, 15, 0, 0, 0, 15, 0, 0, 0, 15, 0, 0},
@@ -33,16 +28,21 @@ void setup() {
         {0, 0, 0, 0, 15, 0, 0, 0, 15, 0, 0, 15, 15, 15, 0, 15, 15, 0, 0, 0, 15, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 15, 0, 0, 15, 0, 0, 15, 0, 15, 0, 15, 0, 15, 0, 0, 15, 0, 0, 0, 0},
         {0, 0, 0, 15, 15, 0, 0, 0, 15, 0, 0, 15, 0, 15, 0, 15, 0, 15, 0, 0, 15, 0, 0, 0, 0}
-    };
+    }; */
+
+void setup() {
+
+    //titleScreen[25][25] = /* "TETRIS \n START" */
+
 
     frame.HardwareInit();
     frame.Clear();
-    setFrameFromBoard(titleScreen);
+    //setFrameFromBoard(titleScreen);
 }
 
 
 void loop() {
-    setFrameFromBoard(titleScreen);
+    //setFrameFromBoard(titleScreen);
     // Wait for user input
     // Play a game of tetris
     // Display high score
@@ -50,13 +50,13 @@ void loop() {
 }
 
 
-void setFrameFromBoard(int board[][]) {
+void setFrameFromBoard(char board[25][25]) {
     /* This takes the board[][] parameter (which must be a 25x25 array) and
      * draws
      *        it on the Peggy display */
     for (int i = 0; i < 24; i++) {
         for (int j = 0; j < 24; j++) {
-            frame.WritePoint(i, j, board[i][j] * 15);
+            frame.WritePoint(i, j, board[i][j]);
         }
     }  
     frame.RefreshAll(1);
