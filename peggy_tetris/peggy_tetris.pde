@@ -1,7 +1,9 @@
 #include <Peggy2.h>
+
+
 // Don't include tetris.c, Arduino links it automatically
 
-Peggy2 frame; /* Stores all pixels displayed on the Peggy */
+Peggy2 peggyFrame; /* Stores all pixels displayed on the Peggy */
 /*char titleScreen[25][25] = {
         {0, 15, 15, 15, 0, 15, 15, 15, 0, 15, 15, 15, 0, 15, 15, 0, 0, 15, 15, 15, 0, 0, 15, 15, 0},
         {0, 0, 15, 0, 0, 15, 0, 0, 0, 0, 15, 0, 0, 15, 0, 15, 0, 0, 15, 0, 0, 15, 0, 0, 0},
@@ -35,8 +37,8 @@ void setup() {
     //titleScreen[25][25] = /* "TETRIS \n START" */
 
 
-    frame.HardwareInit();
-    frame.Clear();
+    peggyFrame.HardwareInit();
+    peggyFrame.Clear();
     //setFrameFromBoard(titleScreen);
 }
 
@@ -56,9 +58,9 @@ void setFrameFromBoard(char board[25][25]) {
      *        it on the Peggy display */
     for (int i = 0; i < 24; i++) {
         for (int j = 0; j < 24; j++) {
-            frame.WritePoint(i, j, board[i][j]);
+            peggyFrame.WritePoint(i, j, board[i][j]);
         }
     }  
-    frame.RefreshAll(1);
+    peggyFrame.RefreshAll(1);
 }
 
