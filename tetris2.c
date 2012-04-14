@@ -10,6 +10,7 @@ void clearArray(int[24][10]);
 void printArray(int*, int, int);
 int* mergeBoard(int[24][10], int[24][10]);
 int checkBoard();
+void fixMoving();
 
 /*
  * Blocks become fixed when any point of the moving block is touching the
@@ -190,16 +191,47 @@ void setRandomTile() {
  */
 void clock() {
 
-    /* Move moving down one row */
+    /* Move moving down one row and replace with zeros */
+    int i, j;
+    for (i = 23; i > 0; i--) {
+        for (j = 0; j < 10; j++) {
+            moving[i][j] = moving[i-1][j];
+        }
+    }
+    
+    for (j = 0; j < 10; j++) {
+        moving[0][j] = 0;
+    }
 
     /* Move moving tiles to fixed if necessary */
+    for (i = 0; i < 23; i++) {
+        for (j = 0; j < 10; j++) {
+            if (moving[i][j] == 1) {
+                if (fixed[i+1][j] == 1) {
+                    fixMoving();
+                }
+            }
+        }
+    }
 
-    /* Merge board for display */
-
-    /* Check board */
+    for (j = 0; j < 10; j++) {
+        if (moving[23][j] == 1) {
+            fixMoving();
+        }
+    }
     
-    /* Merge board for display */
+}
 
+void fixMoving() {
+    int i,j;
+    for (i = 0; i < 24; i++) {
+        for (j = 0; j < 10; j++) {
+            if (moving[i][j] == 1) {    
+                fixed[i][j] == 1;
+                moving[i][j] == 0;
+            }
+        }
+    }
 }
 
 
