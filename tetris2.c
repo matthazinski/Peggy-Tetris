@@ -6,6 +6,7 @@
 #include <stdio.h>   /* IO for debugging */
 #include <stdlib.h> /* Used for memory allocation, may be unncecessary */
 
+void clearArray(int[24][10]);
 void printArray(int*, int, int);
 int* mergeBoard(int[24][10], int[24][10]);
 int checkBoard();
@@ -27,23 +28,30 @@ typedef struct {
     int d_row, d_col;
 } Tetromino;
 
-Tetromino I, L, J, S, Z, O, T; 
+
+Tetromino I = {3, 3,  3, 4,  3, 5,  3, 6};
+Tetromino L = {1, 4,  2, 4,  3, 4,  3, 5};
+Tetromino J = {1, 5,  2, 5,  3, 5,  3, 4};
+Tetromino S = {2, 4,  2, 5,  3, 4,  3, 3};
+Tetromino Z = {3, 4,  3, 5,  2, 4,  2, 3};
+Tetromino O = {2, 4,  2, 5,  3, 4,  3, 5};
+Tetromino T = {3, 4,  3, 5,  2, 5,  3, 6};
+
+
 
 /*
  * At the moment, the main() function is primarily used for testing and
  * debugging. 
  */
 int main() {
-    /* Clear both boards */ 
-    int i, j;
-    for (i = 0; i < 24; i++) {
-        for (j = 0; j < 10; j++) {
-            fixed[i][j] = 0;
-            moving[i][j] = 0;
-        }
-    }
+    clearArray(moving);
+    clearArray(fixed);
+
+    srand(0);   /* Initialize random seed */
+    
 
     /* Debugging info */
+    int j;
     for (j = 0; j < 10; j++) {
         fixed[10][j] = 1;
     }
@@ -56,26 +64,41 @@ int main() {
     printf("Points: %d \n", points);
     
     
-    /* Initialize tetrominos */
-    Tetromino I = {3, 3,  3, 4,  3, 5,  3, 6};
-    Tetromino L = {1, 4,  2, 4,  3, 4,  3, 5};
-    Tetromino J = {1, 5,  2, 5,  3, 5,  3, 4};
-    Tetromino S = {2, 4,  2, 5,  3, 4,  3, 3};
-    Tetromino Z = {3, 4,  3, 5,  2, 4,  2, 3};
-    Tetromino O = {2, 4,  2, 5,  3, 4,  3, 5};
-    Tetromino T = {3, 4,  3, 5,  2, 5,  3, 6};
+    /* More debugging info */
+    printf("Printing moving board:\n");
+    printArray(&moving, 24, 10);
+    printf("Adding random tile:\n");
 
+    int k;
+    for (k = 0; k < 5; k++) {
+        setRandomTile();
+        printArray(&moving, 24, 10);
+        printf("\n\n\n");
+        clearArray(moving);
+    }
 
     return 0;
 }
 
+
+/* Zeros out a 24x10 2D array */
+void clearArray(int array[24][10]) {
+    int i, j;
+    for (i = 0; i < 24; i++) {
+        for (j = 0; j < 10; j++) {
+            array[i][j] = 0;
+        }
+    }
+}
+
+
+
 /* Prints an array of arbitrary size to stdout. This is used for debugging. */
 void printArray(int* array, int height, int width) {
-    int i;
-    int j;
+    int i, j;
 
     for (i = 0; i < height; i++) {
-        
+         
         for (j = 0; j < width; j++) {
             printf("%d ", *(array+i*width+j));
         }
@@ -86,8 +109,22 @@ void printArray(int* array, int height, int width) {
 
 /* Add a random tile alligned to the top 4 rows of the moving array */
 void setRandomTile() {
-
-
+    Tetromino tile;
+    int tileNum = rand() % 7;
+    switch(tileNum) {
+        case 0: tile = I; break;
+        case 1: tile = L; break;
+        case 2: tile = J; break;
+        case 3: tile = S; break;
+        case 4: tile = Z; break;
+        case 5: tile = O; break;
+        case 6: tile = T; break;
+    }
+    
+    moving[tile.a_row][tile.a_col] = 1;
+    moving[tile.b_row][tile.b_col] = 1;
+    moving[tile.c_row][tile.c_col] = 1;
+    moving[tile.d_row][tile.d_col] = 1;
 }
 
 
