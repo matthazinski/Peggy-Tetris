@@ -1,11 +1,11 @@
-Formatting guidelines:
-- Limit lines to ~80 characters --mhazinsk
-- Use four-space indents, NOT tabs --mhazinsk
+DO NOT commit to tetris2.c unless it compiles under C89.
 
-Potential future problems:
-- The Peggy is limited to 14 kB of (compiled) flash memory -- can probably replace with ATMega644
-- 16 MHz (?) CPU speed 
-- No spare output pins -- all communications must be over serial, and the ethernet shield is not supported
+TODO:
+- moveLeft() / moveRight() for tetris2.c
+- rotate() for tetris2.c
+- Get peggy_tetris.pde file to compile in Arduino
+- Solder buttons on so they do not interfere with serial lines
+
 
 Relevant documentation:
 - http://www.evilmadscientist.com/article.php/PeggyArdLib 
