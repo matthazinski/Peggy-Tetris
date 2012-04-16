@@ -11,6 +11,8 @@ void printArray(int*, int, int);
 int* mergeBoard(int[24][10], int[24][10]);
 int checkBoard();
 void fixMoving();
+void moveLeft();
+void moveRight();
 
 /*
  * Blocks become fixed when any point of the moving block is touching the
@@ -71,12 +73,26 @@ int main() {
     printf("Adding random tile:\n");
 
     int k;
-    for (k = 0; k < 5; k++) {
+    for (k = 0; k < 7; k++) {
         setRandomTile();
         printArray(&moving, 24, 10);
         printf("\n\n\n");
         clearArray(moving);
     }
+
+	/*  trying to move left */
+	setRandomTile();
+	printArray(&moving,24,10);
+	printf("\n\n\n");
+	moveLeft();
+	printArray(&moving,24,10);
+	
+	/*move right*/
+	printf("\n\n\n");
+	moveRight();
+	printArray(&moving,24,10);
+	
+
     getchar();
     return 0;
 }
@@ -247,4 +263,64 @@ int* mergeBoard(int fixed[24][10], int moving[24][10]) {
     }
 
     return &board;
+}
+
+void moveLeft()
+{
+	int i, j;
+	/*check whether moving will hit a wall or piece*/
+	int isValidMove=1;
+	for(i=0; i<24; i++) {
+		for(j=0; j<10; j++) {
+			if(moving[i][j]==1) {
+				if(fixed[i][j-1]==1)
+					isValidMove=0;
+				else if(j-1==-1)
+					isValidMove=0;
+			}
+		}
+	}
+	/* if it can move, move the piece*/
+	if(isValidMove==1)
+		for(i=0; i<24; i++) {
+			for(j=0; j<10; j++) {
+				if(moving[i][j]==1) {
+					moving[i][j]=0;
+					moving[i][j-1]=1;
+				}
+			}
+		}
+		
+	return;
+}
+
+void moveRight()
+{
+	int i, j;
+	/*check whether moving will hit a wall or piece*/
+	int isValidMove=1;
+	
+	for(i=0; i<24; i++) {
+		for(j=0; j<10; j++) {
+			if(moving[i][j]==1) {
+				if(fixed[i][j+1]==1)
+					isValidMove=0;
+				else if(j+1==10)
+					isValidMove=0;
+			}
+		}
+	}
+
+	/* if it can move, move the piece*/
+	if(isValidMove==1)
+		for(i=0; i<24; i++) {
+			for(j=9; j>=0; j--) {
+				if(moving[i][j]==1) {
+					moving[i][j]=0;
+					moving[i][j+1]=1;
+				}
+			}
+		}
+		
+	return;
 }
