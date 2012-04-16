@@ -1,10 +1,10 @@
 /* 
- * Working tetris code. Do not push commits to this file unless it compiles in
+ * Working Tetris code. Do not push commits to this file unless it compiles in
  * GCC using C89.
  */
 
 #include <stdio.h>   /* IO for debugging */
-#include <stdlib.h> /* Used for memory allocation, may be unncecessary */
+#include <stdlib.h> /* Used for memory allocation, may be unnecessary */
 
 void clearArray(int[24][10]);
 void printArray(int*, int, int);
@@ -77,12 +77,12 @@ int main() {
         printf("\n\n\n");
         clearArray(moving);
     }
-
+    getchar();
     return 0;
 }
 
 
-/* Zeros out a 24x10 2D array */
+/* Zeros out a 24 x 10 2D array */
 void clearArray(int array[24][10]) {
     int i, j;
     for (i = 0; i < 24; i++) {
@@ -108,7 +108,7 @@ void printArray(int* array, int height, int width) {
     }
 }
 
-/* Add a random tile alligned to the top 4 rows of the moving array */
+/* Add a random tile aligned to the top 4 rows of the moving array */
 void setRandomTile() {
     Tetromino tile;
     int tileNum = rand() % 7;
