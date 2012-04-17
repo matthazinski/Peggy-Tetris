@@ -10,6 +10,8 @@ void clearArray(int[24][10]);
 void printArray(int*, int, int);
 int* mergeBoard(int[24][10], int[24][10]);
 int checkBoard();
+void setRandomTile();
+void clock();
 void fixMoving();
 void moveLeft();
 void moveRight();
