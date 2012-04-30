@@ -15,6 +15,7 @@ void clock();
 void fixMoving();
 void moveLeft();
 void moveRight();
+void rotate();
 
 /*
  * Blocks become fixed when any point of the moving block is touching the
@@ -325,4 +326,78 @@ void moveRight()
 		}
 		
 	return;
+}
+
+void rotate()
+{
+        int i, j, validRotate=1, rotate=1, pointI, pointJ, Moving[24][10];
+        for(i=0;i<24;i++){
+        	for(j=0;j<10;j++)
+      			Moving[i][j]=moving[i][j]; //Creates a temporary array for moving.
+        }
+        
+        for(i=0;i<24;i++){
+        	for(j=0;j<10;j++){
+        		if(Moving[i][j]==1){ //The conditions must be met for the piece to rotate. 
+        			if((Moving[i+1][j]==1||Moving[i-1][j]==1)&&(Moving[i][j+1]||Moving[i][j-1])){
+        				if(Moving[i+2][j]==1||Moving[i][j+2]==1)
+        					continue;
+        				rotate=1;
+        				pointI=i; //This sets the point around which it will rotate.
+        				pointJ=j;
+        				}
+        			else if(Moving[i+1][j]==1&&Moving[i-1][j]==1){	
+        				rotate=1;
+        				pointI=i;
+        				pointJ=j;
+        				}
+        			else if(Moving[i][j+1]==1&&Moving[i][j-1]==1){	
+        				rotate=1;
+        				pointI=i;
+        				pointJ=j;
+        				}
+        		}
+        	}
+        	break;
+        }
+        
+        i=pointI;
+        j=pointJ;
+        if(rotate==1){
+        	int tempCross, tempDiag, tempLine;
+        	tempCross=Moving[i-1][j];
+        	tempDiag=Moving[i-1][j+1];
+        	tempLine=Moving[i][j+2];
+        	
+        	Moving[i-1][j]=Moving[i][j-1];
+        	Moving[i][j-1]=Moving[i+1][j]; //Rotates all the respective parts around.
+        	Moving[i+1][j]=Moving[i][j+1];
+        	Moving[i][j+1]=tempCross;
+        	
+        	Moving[i-1][j+1]=Moving[i-1][j-1];
+        	Moving[i-1][j-1]=Moving[i+1][j-1];
+        	Moving[i+1][j-1]=Moving[i+1][j+1];
+        	Moving[i+1][j+1]=tempDiag;
+        	
+        	Moving[i+2][j]=Moving[i][j+2];
+        	Moving[i][j+2]=tempLine;
+        }
+        
+         for(i=0;i<24;i++){
+                for(j=0;j<10;j++){
+                        if(Moving[i][j]==1){
+                if(Moving[i][j]==fixed[i][j]) //Checks if the rotate is valid.
+                        validRotate=0;
+						}
+                }
+        }
+        
+        if(validRotate==1){
+        for(i=0;i<24;i++){
+        	for(j=0;j<10;j++) //Sets the moving array to the temp array so it is turned.
+      			moving[i][j]=Moving[i][j];
+        }
+        }
+        
+        return;
 }
