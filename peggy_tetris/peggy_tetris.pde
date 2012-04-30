@@ -2,7 +2,9 @@
 
 
 // Don't include tetris.c, Arduino links it automatically
-
+const int buttonPinLeft = 23;
+const int buttonPinRight = 24;
+const int buttonPinRotate = 25;
 Peggy2 peggyFrame; /* Stores all pixels displayed on the Peggy */
 char titleScreen[25][25] = {
         {0, 15, 15, 15, 0, 15, 15, 15, 0, 15, 15, 15, 0, 15, 15, 0, 0, 15, 15, 15, 0, 0, 15, 15, 0},
@@ -32,19 +34,59 @@ char titleScreen[25][25] = {
         {0, 0, 0, 15, 15, 0, 0, 0, 15, 0, 0, 15, 0, 15, 0, 15, 0, 15, 0, 0, 15, 0, 0, 0, 0}
 }; 
 
+char off[25][25] = {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+};
+
+
+
 void setup() {
 
     //titleScreen[25][25]  /* "TETRIS \n START" */
-
-
     peggyFrame.HardwareInit();
     peggyFrame.Clear();
     setFrameFromBoard(titleScreen);
+    pinMode(buttonPinLeft, INPUT);
+    pinMode(buttonPinRight, INPUT);
+    pinMode(buttonPinRotate, INPUT);
 }
 
 
 void loop() {
     setFrameFromBoard(titleScreen);
+    int buttonLeft = 0;
+    int buttonRight = 0;
+    int buttonRotate = 0;
+    while(!(buttonLeft + buttonRight + buttonRotate)) {
+      // do nothing
+      buttonLeft = digitalRead(buttonPinLeft);
+      buttonRight = digitalRead(buttonPinRight);
+      buttonRotate = digitalRead(buttonPinRotate);
+    }
+    setFrameFromBoard(off);
     // Wait for user input
     // Play a game of tetris
     // Display high score
@@ -52,10 +94,10 @@ void loop() {
 }
 
 
+
 void setFrameFromBoard(char board[25][25]) {
     /* This takes the board[][] parameter (which must be a 25x25 array) and
-     * draws
-     *        it on the Peggy display */
+     * draws it on the Peggy display */
     for (int i = 0; i < 24; i++) {
         for (int j = 0; j < 24; j++) {
             peggyFrame.WritePoint(i, j, board[i][j]);
