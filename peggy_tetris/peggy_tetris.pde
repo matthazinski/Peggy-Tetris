@@ -2,9 +2,12 @@
 
 
 // Don't include tetris.c, Arduino links it automatically
-const int buttonPinLeft = 23;
-const int buttonPinRight = 24;
+const int buttonPinLeft = 24;
+const int buttonPinRight = 27;
 const int buttonPinRotate = 25;
+int buttonRight;
+int buttonLeft;
+int buttonRotate;
 Peggy2 peggyFrame; /* Stores all pixels displayed on the Peggy */
 char titleScreen[25][25] = {
         {0, 15, 15, 15, 0, 15, 15, 15, 0, 15, 15, 15, 0, 15, 15, 0, 0, 15, 15, 15, 0, 0, 15, 15, 0},
@@ -66,27 +69,39 @@ char off[25][25] = {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 void setup() {
 
     //titleScreen[25][25]  /* "TETRIS \n START" */
-    peggyFrame.HardwareInit();
-    peggyFrame.Clear();
+    peggyFrame.Peggy_HardwareInit();
+    peggyFrame.Peggy_Clear();
     setFrameFromBoard(titleScreen);
     pinMode(buttonPinLeft, INPUT);
     pinMode(buttonPinRight, INPUT);
     pinMode(buttonPinRotate, INPUT);
+    buttonLeft = 0;
+    buttonRight = 0;
+    buttonRotate = 0;
 }
 
 
 void loop() {
-    setFrameFromBoard(titleScreen);
-    int buttonLeft = 0;
-    int buttonRight = 0;
-    int buttonRotate = 0;
-    while(!(buttonLeft + buttonRight + buttonRotate)) {
-      // do nothing
-      buttonLeft = digitalRead(buttonPinLeft);
-      buttonRight = digitalRead(buttonPinRight);
-      buttonRotate = digitalRead(buttonPinRotate);
+    buttonLeft = digitalRead(buttonPinLeft);
+    buttonRight = digitalRead(buttonPinRight);
+    buttonRotate = digitalRead(buttonPinRotate);
+    
+    unsigned long int tmp = millis();
+   
+    
+    if(buttonLeft){
+      while(millis()<=tmp+100){
+        setFrameFromBoard(off);
+      }
     }
-    setFrameFromBoard(off);
+    
+    else {
+      while(millis()<=tmp+100){
+        setFrameFromBoard(titleScreen);
+      }
+    }
+        
+    
     // Wait for user input
     // Play a game of tetris
     // Display high score
@@ -98,11 +113,12 @@ void loop() {
 void setFrameFromBoard(char board[25][25]) {
     /* This takes the board[][] parameter (which must be a 25x25 array) and
      * draws it on the Peggy display */
-    for (int i = 0; i < 24; i++) {
-        for (int j = 0; j < 24; j++) {
-            peggyFrame.WritePoint(i, j, board[i][j]);
+    peggyFrame.Peggy_Clear();
+    for (int i = 0; i <= 24; i++) {
+        for (int j = 0; j <= 24; j++) {
+            peggyFrame.Peggy_WritePoint(i, j, board[i][j]);
         }
     }  
-    peggyFrame.RefreshAll(1);
+    peggyFrame.Peggy_RefreshAll(1);
+    
 }
-
