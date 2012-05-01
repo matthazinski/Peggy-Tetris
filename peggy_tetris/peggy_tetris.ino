@@ -18,12 +18,13 @@ boolean pushDownLeft;
 boolean pushDownRight;
 boolean pushDownRotate;
 
-int fixed[24][10] = {0};   /* Blocks that are not moving */
-int moving[24][10] = {0}; /* The moving block */
-int combined[24][10] = {0}; /* What to display on the board */
+char fixed[24][10] = {0};   /* Blocks that are not moving */
+char moving[24][10] = {0}; /* The moving block */
+char combined[24][10] = {0}; /* What to display on the board */
 char displayBoard[25][25] = {0}; /* Same as combined, but padded to take up the whole board */
 int points = 0;
 boolean gamePlaying;
+unsigned long int nextClock;
 
 
 Peggy2 peggyFrame; /* Stores all pixels displayed on the Peggy */
@@ -108,6 +109,13 @@ void setup() {
     buttonRight = 0;
     buttonRotate = 0;
     gamePlaying = false;
+    
+    nextClock = millis() + 4000;
+    while (nextClock > millis()) {
+      setFrameFromBoard(titleScreen);
+    }
+    
+    setRandomTile();
     //Serial.begin(9600);
 //    memset(moving, 0, sizeof(int) * 24 * 10);
 //    memset(fixed, 0, sizeof(int) * 24 * 10);
@@ -131,21 +139,27 @@ void loop() {
     //Serial.println(buttonLeft);   
 
     // Display title until user input
-    setFrameFromBoard(titleScreen);
+    //setFrameFromBoard(titleScreen);
 //    while((!pushDownLeft) && (!pushDownRight) && (!pushDownRotate)) {
 //      getUserInput();   
 //    }
    
 
-    unsigned long int nextClock = millis() + 2000;
     gamePlaying = true;
     //setFrameFromBoard(titleScreen);
     //setFrameFromIntBoard(displayBoard);
     // Loop through until the user loses
     
-    memset(displayBoard, 15, sizeof(char) * 25 * 25);
+      //memset(displayBoard, 15, sizeof(char) * 25 * 25);
+    if (nextClock < millis()) {
+      mergeBoard();
+      clock();
+      nextClock = millis() + 500;
+    }
     
-    while (true) {
+      setFrameFromBoard(displayBoard); 
+     
+    /*while (true) {
       
       setFrameFromBoard(displayBoard);
       // Check to see if
@@ -157,7 +171,7 @@ void loop() {
         mergeBoard();
         nextClock = nextClock + 2000;
       }
-    }
+    }*/
 
 
     
@@ -391,8 +405,8 @@ void fixMoving() {
   for (i = 0; i < 24; i++) {
     for (j = 0; j < 10; j++) {
       if (moving[i][j] == 1) {    
-        fixed[i][j] == 1;
-        moving[i][j] == 0;
+        fixed[i][j] = 1;
+        moving[i][j] = 0;
       }
     }
   }
@@ -406,8 +420,8 @@ void mergeBoard() {
   int j;
   for (i = 0; i < 24; i++) {
     for (j = 0; j < 10; j++) {
-      combined[i][j] = fixed[i][j] + moving[i][j];
-      displayBoard[i][j] = combined[i][j];
+      //combined[i][j] = fixed[i][j] || moving[i][j];
+      displayBoard[i][j] = (fixed[i][j] || moving[i][j]) ? 15 : 0;
     }
   }
 }
