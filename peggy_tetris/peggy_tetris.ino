@@ -108,13 +108,16 @@ void setup() {
     buttonLeft = 0;
     buttonRight = 0;
     buttonRotate = 0;
-    gamePlaying = false;
-    
+    pushDownLeft = false;
+    pushDownRight = false;
+    pushDownRotate = false;
     nextClock = millis() + 4000;
-    while (nextClock > millis()) {
+    //while (nextClock > millis()) {
+    while(!pushDownLeft && !pushDownRight && !pushDownRotate) {
       setFrameFromBoard(titleScreen);
+      getUserInput();
     }
-    
+    gamePlaying = true;
     setRandomTile();
     //Serial.begin(9600);
 //    memset(moving, 0, sizeof(int) * 24 * 10);
@@ -132,67 +135,39 @@ void setup() {
 
 void loop() {
     //Serial.println("hi!");
-    pushDownLeft = false;
-    pushDownRight = false;
-    pushDownRotate = false;
-    //Serial.print("Left: ");
-    //Serial.println(buttonLeft);   
+
 
     // Display title until user input
     //setFrameFromBoard(titleScreen);
 //    while((!pushDownLeft) && (!pushDownRight) && (!pushDownRotate)) {
 //      getUserInput();   
 //    }
-   
 
-    gamePlaying = true;
-    //setFrameFromBoard(titleScreen);
-    //setFrameFromIntBoard(displayBoard);
-    // Loop through until the user loses
     
-      //memset(displayBoard, 15, sizeof(char) * 25 * 25);
-    if (nextClock < millis()) {
+    // Loop through until the user loses
+    if(nextClock < millis() && gamePlaying) {
+      // Handle user input events
+      getUserInput();
+      if(pushDownLeft) {
+        moveLeft();
+      }
+      else if(pushDownRight) {
+        moveRight();
+      }
+      // TODO fix rotate() 
       mergeBoard();
       clock();
+
+      if(checkBoard()) { //Detect loses
+        mergeBoard();
+        gamePlaying = false;
+      }
+
       nextClock = millis() + 500;
     }
     
       setFrameFromBoard(displayBoard); 
-     
-    /*while (true) {
-      
-      setFrameFromBoard(displayBoard);
-      // Check to see if
-
-      //setRandomTile();
-      //mergeBoard();
-      if (millis() > nextClock) {
-        setRandomTile();
-        mergeBoard();
-        nextClock = nextClock + 2000;
-      }
-    }*/
-
-
-    
-    
-    // Display end sequence
-    
-    
-
-//    while(millis()<=tmp+2000){
-//      setFrameFromBoard(off);
-//    }
-//    while(millis()<=tmp+4000){
-//      setFrameFromBoard(titleScreen);
-//    }
-   
-        
-    
-    // Wait for user input
-    // Play a game of tetris
-    // Display high score
-    // Wait for user input
+    // TODO add end sequence
 }
 
 
@@ -314,49 +289,63 @@ int checkBoard() {
    * Check to see if the user has lost the game (i.e. tiles are in the four
    * hidden rows)
    */
-  int i;
-  int j;
   int status = 0;
-  for (i = 0; i < 4; i++) { /* Search the first four rows */
-    for (j = 0; j < 10; j++) {
-      if (fixed[i][j] == 1) {
+  for (int i = 0; i < 4; i++) { /* Search the first four rows */
+    for (int j = 0; j < 10; j++) {
+      if (fixed[i][j]) {
         status =  1;  /* Lose game */
       }
     }
   }
 
   /* Check the fixed board for complete rows and remove them */
-  int newBoard[24][10];
-  int counter = 23;
-  for (i = 23; i >= 0; i--) {
+  //int newBoard[24][10] = {0};
+//  int counter = 23;
+//  for (i = 23; i >= 0; i--) {
+//    int sum = 0;
+//    for (j = 0; j < 10; j++) {
+//      sum = sum + fixed[i][j];
+//    }
+//
+//    if (sum == 10) {
+//      points = points + 100;  
+//    }
+//    else {
+//      for (j = 0; j < 10; j++) {
+//        newBoard[counter][j] = fixed[i][j];
+//      }
+//      counter--;
+//    }
+//  }
+//
+//  for (i = counter; i >= 0; i--) {
+//    for (j = 0; j < 10; j++) {
+//      newBoard[counter][j] = 0;
+//    }
+//  }
+//
+
+  for (int i  = 0; i < 24; i++) {
     int sum = 0;
-    for (j = 0; j < 10; j++) {
+    for (int j = 0; j < 10; j++) {
       sum = sum + fixed[i][j];
     }
-
-    if (sum == 10) {
-      points = points + 100;  
-    }
-    else {
-      for (j = 0; j < 10; j++) {
-        newBoard[counter][j] = fixed[i][j];
+    
+    if(sum == 10) {
+      for (int j = 0; j < 10; j++) {
+        fixed[i][j] = 0;  
       }
-      counter--;
     }
   }
+      
+//  /* Move the new board back to the fixed board */
+//  for (int i = 0; i < 24; i++) {
+//    for (int j = 0; j < 10; j++) {
+//      fixed[i][j] = newBoard[i][j];
+//    }
+//  }
 
-  for (i = counter; i >= 0; i--) {
-    for (j = 0; j < 10; j++) {
-      newBoard[counter][j] = 0;
-    }
-  }
-
-  /* Move the new board back to the fixed board */
-  for (i = 0; i < 24; i++) {
-    for (j = 0; j < 10; j++) {
-      fixed[i][j] = newBoard[i][j];
-    }
-  }
+// TODO test this function
 
 
   return status;
@@ -368,7 +357,6 @@ int checkBoard() {
  * they are touching the fixed board or occupying the bottom row.
  */
 void clock() {
-
   /* Move moving down one row and replace with zeros */
   int i, j;
   for (i = 23; i > 0; i--) {
@@ -382,33 +370,44 @@ void clock() {
   }
 
   /* Move moving tiles to fixed if necessary */
+  boolean needsFixing = false;
   for (i = 0; i < 23; i++) {
     for (j = 0; j < 10; j++) {
       if (moving[i][j] == 1) {
         if (fixed[i+1][j] == 1) {
-          fixMoving();
+          needsFixing = true;
         }
       }
     }
   }
 
+    
   for (j = 0; j < 10; j++) {
     if (moving[23][j] == 1) {
-      fixMoving();
+      needsFixing = true;
     }
+  }
+  
+  if (needsFixing) {
+    fixMoving();
   }
 
 }
 
 void fixMoving() {
+  boolean changed = false;
   int i,j;
   for (i = 0; i < 24; i++) {
     for (j = 0; j < 10; j++) {
       if (moving[i][j] == 1) {    
         fixed[i][j] = 1;
         moving[i][j] = 0;
+        changed = true;
       }
     }
+  }
+  if(changed) {
+    setRandomTile();
   }
   return;
 }
