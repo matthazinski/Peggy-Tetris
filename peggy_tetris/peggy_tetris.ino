@@ -554,6 +554,4 @@ void drop() {
           cont=0;  }}}
     mergeBoard();
     clock();
-  }
-}
-  
+  }  
