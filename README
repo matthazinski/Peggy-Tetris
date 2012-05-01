@@ -1,11 +1,14 @@
-DO NOT commit to tetris2.c unless it compiles under C89.
+This is a Arduino sketch that can be used to play Tetris on the Peggy2 board, which was developed as a project for ENGE 1104 at Virginia Tech. The necessary code is currently contained in the peggy_tetris directory. tetris.c and tetris2.c are older libraries that are now contained entirely in the Arduino sketch.
 
-TODO:
-- moveLeft() / moveRight() for tetris2.c
-- rotate() for tetris2.c
-- Get peggy_tetris.pde file to compile in Arduino
-- Solder buttons on so they do not interfere with serial lines
+Gameplay requires the board contain four directional buttons
+- Left is mapped to moveLeft()
+- Right is mapped to moveRight()
+- Down is mapped to drop()
+- Up is mapped to rotate()
 
+Note that buttons need to be depressed until the next clock cycle in order to be recognized. The initial delay between line changes is 1000ms, but this decreases by 5% after each clock cycle.
 
-Relevant documentation:
+The game is lost when new pieces cannot be added to the current board. Full lines are automatically deleted, and the tiles are pushed downwards.
+
+External documentation:
 - http://www.evilmadscientist.com/article.php/PeggyArdLib 

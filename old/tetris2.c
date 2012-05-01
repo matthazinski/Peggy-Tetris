@@ -1,8 +1,8 @@
-/* 
- * Working Tetris code. Do not push commits to this file unless it compiles in
- * GCC using C89.
- */
-
+/*
+ * This is older code used for testing a tetris library for Arduino in GCC.
+ * There are a few bugs I haven't bothered to fix because all code was just
+ * moved into peggy_tetris.ino. This is probably not a file you want.
+*/
 #include <stdio.h>   /* IO for debugging */
 #include <stdlib.h> /* Used for memory allocation, may be unnecessary */
 

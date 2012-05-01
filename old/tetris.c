@@ -1,5 +1,7 @@
-/* Note: for indents, use 4-character spaces, NOT tabs. */
-
+/*
+ * This is not the file you want. It doesn't compile. Matt rewrote it and put
+ * it in tetris2.c.
+ */
 #define BOARD_WIDTH     10
 #define BOARD_HEIGHT    20
 
