@@ -5,19 +5,22 @@
 
 const int buttonPinLeft = 1;      // b2  left    24  ADC1
 const int buttonPinRight = 4;     // b5  right   27  ADC4 
-const int buttonPinRotate = 3;    // b3  down    25  ADC2
+const int buttonPinRotate = 3;    // b3  down    25  ADC2  
+const int buttonPinDrop = 2;
 const int THRESHOLD = 512;
-const int DELAY = 150;
+const int DELAY = 100;
 
 // Holds analog readings of button pins
 int buttonRight;
 int buttonLeft;
 int buttonRotate;
+int buttonDrop;
 
 // Whether the user was pushing down the button at the last check
 boolean pushDownLeft;
 boolean pushDownRight;
 boolean pushDownRotate;
+boolean pushDownDrop;
 
 char fixed[24][10] = {0};   /* Blocks that are not moving */
 char moving[24][10] = {0}; /* The moving block */
@@ -28,7 +31,7 @@ boolean gamePlaying;
 unsigned long int nextClock;
 unsigned long int nextInput;
 
-
+char tileType;
 Peggy2 peggyFrame; /* Stores all pixels displayed on the Peggy */
 
 char titleScreen[25][25] = {
@@ -96,48 +99,63 @@ typedef struct {
 
 
 Tetromino I = {3, 3,  3, 4,  3, 5,  3, 6};
-Tetromino L = {1, 4,  2, 4,  3, 4,  3, 5};
-Tetromino J = {1, 5,  2, 5,  3, 5,  3, 4};
-Tetromino S = {2, 4,  2, 5,  3, 4,  3, 3};
-Tetromino Z = {3, 4,  3, 5,  2, 4,  2, 3};
+Tetromino L = {1, 4,  3, 4,  2, 4,  3, 5};
+Tetromino J = {1, 5,  3, 5,  2, 5,  3, 4};
+Tetromino S = {2, 5,  2, 4,  3, 4,  3, 3};
+Tetromino Z = {3, 5,  3, 4,  2, 4,  2, 3};
 Tetromino O = {2, 4,  2, 5,  3, 4,  3, 5};
 Tetromino T = {3, 4,  3, 5,  2, 5,  3, 6};
 
 
 void setup() {
-    peggyFrame.HardwareInit();
-    peggyFrame.Clear();
+    peggyFrame.Peggy_HardwareInit();
+    peggyFrame.Peggy_Clear();
     buttonLeft = 0;
     buttonRight = 0;
     buttonRotate = 0;
+    buttonDrop = 0;
     pushDownLeft = false;
     pushDownRight = false;
     pushDownRotate = false;
-
+    pushDownDrop = false;
+    /*
     while(!pushDownLeft && !pushDownRight && !pushDownRotate) {
       setFrameFromBoard(titleScreen);
       getUserInput();
     }
+    */
     gamePlaying = true;
     setRandomTile();
     nextClock = millis();
     nextInput = millis();
+    
 }
 
 
 void loop() {
-
+    
     // Loop through until the user loses
     if(nextInput < millis() && gamePlaying) {
       // Handle user input events
-      getUserInput();
+    getUserInput();
       if(pushDownLeft) {
         moveLeft();
       }
       else if(pushDownRight) {
         moveRight();
       }
-      // TODO fix rotate() 
+      else if(pushDownRotate) {
+        rotate();
+      } 
+      else if(pushDownDrop) {
+        drop();
+      }
+      
+      nextInput = millis() + DELAY;
+      
+      
+    }
+      
       if(nextClock < millis() && gamePlaying) {
         mergeBoard();
         clock();
@@ -148,10 +166,6 @@ void loop() {
         }
         nextClock = millis() + 2 * DELAY;
       }
-      nextInput = millis() + DELAY;
-      
-      
-    }
     
       setFrameFromBoard(displayBoard); 
     // TODO add end sequence
@@ -165,35 +179,41 @@ void setFrameFromBoard(char board[25][25]) {
         
     /* This takes the board[][] parameter (which must be a 25x25 array) and
      * draws it on the Peggy display */
-    peggyFrame.Clear();
+    peggyFrame.Peggy_Clear();
     for (int i = 0; i <= 24; i++) {
         for (int j = 0; j <= 24; j++) {
-            peggyFrame.WritePoint(i, j, board[j][i]);
+            peggyFrame.Peggy_WritePoint(i, j, board[j][i]);
         }
     }  
-    peggyFrame.RefreshAll(1);  
+    peggyFrame.Peggy_RefreshAll(1);  
 }
 
 void setFrameFromIntBoard(int board[25][25]) {
-    peggyFrame.Clear();
+    peggyFrame.Peggy_Clear();
     for (int i = 0; i <= 24; i++) {
       for (int j = 0; j <= 24; j++) {
         if (board[i][j]) {
-          peggyFrame.WritePoint(j, i, 15);
+          peggyFrame.Peggy_WritePoint(j, i, 15);
         }
         else {
-          peggyFrame.WritePoint(j, i, 0);
+          peggyFrame.Peggy_WritePoint(j, i, 0);
         }
       }
     }
-    peggyFrame.RefreshAll(1);
+    peggyFrame.Peggy_RefreshAll(1);
 }
 
 void getUserInput() {
     buttonLeft = analogRead(buttonPinLeft);
     buttonRight = analogRead(buttonPinRight);
     buttonRotate = analogRead(buttonPinRotate);
-
+    buttonDrop = analogRead(buttonPinDrop);
+    if (buttonDrop < THRESHOLD) {
+      pushDownDrop = true;
+    }
+    else{
+      pushDownDrop = false;
+    }
     if (buttonLeft < THRESHOLD) {
       pushDownLeft = true;
     }
@@ -241,29 +261,36 @@ void setRandomTile() {
   switch(tileNum) {
   case 0: 
     tile = I; 
+    tileType = 'I';
     break;
   case 1: 
     tile = L; 
+    tileType = 'L';
     break;
   case 2: 
     tile = J; 
+    tileType = 'J';
     break;
   case 3: 
     tile = S; 
+    tileType = 'S';
     break;
   case 4: 
     tile = Z; 
+    tileType = 'Z';
     break;
   case 5: 
     tile = O; 
+    tileType = 'O';
     break;
   case 6: 
     tile = T; 
+    tileType = 'T';
     break;
   }
 
   moving[tile.a_row][tile.a_col] = 1;
-  moving[tile.b_row][tile.b_col] = 1;
+  moving[tile.b_row][tile.b_col] = 2;
   moving[tile.c_row][tile.c_col] = 1;
   moving[tile.d_row][tile.d_col] = 1;
 }
@@ -285,37 +312,31 @@ int checkBoard() {
     }
   }
 
+
+
   /* Check the fixed board for complete rows and remove them */
-  //int newBoard[24][10] = {0};
-//  int counter = 23;
-//  for (i = 23; i >= 0; i--) {
-//    int sum = 0;
-//    for (j = 0; j < 10; j++) {
-//      sum = sum + fixed[i][j];
-//    }
-//
-//    if (sum == 10) {
-//      points = points + 100;  
-//    }
-//    else {
-//      for (j = 0; j < 10; j++) {
-//        newBoard[counter][j] = fixed[i][j];
-//      }
-//      counter--;
-//    }
-//  }
-//
-//  for (i = counter; i >= 0; i--) {
-//    for (j = 0; j < 10; j++) {
-//      newBoard[counter][j] = 0;
-//    }
-//  }
-//
+  int row=24, sum = 0;
+  while(row>=0){
+    sum = 0;
+    for(int i=0;i<10;i++)
+      if(fixed[row][i])
+        sum++;
+    if(sum==10){
+      for(int i=row;i>=0;i--)
+        for(int j=0;j<10;j++)
+          fixed[i][j]=fixed[i-1][j];
+      for(int i=0;i<10;i++)
+        fixed[0][i]=0;
+    }
+    
+   row--;
+  }
+
 
   for (int i  = 0; i < 24; i++) {
     int sum = 0;
     for (int j = 0; j < 10; j++) {
-      sum = sum + fixed[i][j];
+      if(fixed[i][j]) sum+=1;
     }
     
     if(sum == 10) {
@@ -360,8 +381,8 @@ void clock() {
   boolean needsFixing = false;
   for (i = 0; i < 23; i++) {
     for (j = 0; j < 10; j++) {
-      if (moving[i][j] == 1) {
-        if (fixed[i+1][j] == 1) {
+      if (moving[i][j]) {
+        if (fixed[i+1][j]) {
           needsFixing = true;
         }
       }
@@ -370,7 +391,7 @@ void clock() {
 
     
   for (j = 0; j < 10; j++) {
-    if (moving[23][j] == 1) {
+    if (moving[23][j]) {
       needsFixing = true;
     }
   }
@@ -386,7 +407,7 @@ void fixMoving() {
   int i,j;
   for (i = 0; i < 24; i++) {
     for (j = 0; j < 10; j++) {
-      if (moving[i][j] == 1) {    
+      if (moving[i][j]) {    
         fixed[i][j] = 1;
         moving[i][j] = 0;
         changed = true;
@@ -418,8 +439,8 @@ void moveLeft() {
   int isValidMove=1;
   for(i=0; i<24; i++) {
     for(j=0; j<10; j++) {
-      if(moving[i][j]==1) {
-        if(fixed[i][j-1]==1)
+      if(moving[i][j]) {
+        if(fixed[i][j-1])
           isValidMove=0;
         else if(j-1==-1)
           isValidMove=0;
@@ -427,12 +448,16 @@ void moveLeft() {
     }
   }
   /* if it can move, move the piece*/
-  if(isValidMove==1)
+  if(isValidMove)
     for(i=0; i<24; i++) {
       for(j=0; j<10; j++) {
         if(moving[i][j]==1) {
           moving[i][j]=0;
           moving[i][j-1]=1;
+        }
+        else if(moving[i][j]==2) {
+          moving[i][j]=0;
+          moving[i][j-1]=2;
         }
       }
     }
@@ -447,8 +472,8 @@ void moveRight() {
 
   for(i=0; i<24; i++) {
     for(j=0; j<10; j++) {
-      if(moving[i][j]==1) {
-        if(fixed[i][j+1]==1)
+      if(moving[i][j]) {
+        if(fixed[i][j+1])
           isValidMove=0;
         else if(j+1==10)
           isValidMove=0;
@@ -457,88 +482,78 @@ void moveRight() {
   }
 
   /* if it can move, move the piece*/
-  if(isValidMove==1)
+  if(isValidMove)
     for(i=0; i<24; i++) {
       for(j=9; j>=0; j--) {
         if(moving[i][j]==1) {
           moving[i][j]=0;
           moving[i][j+1]=1;
         }
+        else if(moving[i][j]==2) {
+          moving[i][j]=0;
+          moving[i][j+1]=2;
+        }
       }
     }
 
   return;
 }
+
+
+
 
 void rotate() {
-  int i, j, validRotate=1, rotate=1, pointI, pointJ, Moving[24][10];
-  for(i=0;i<24;i++){
+  //makes temporary moving
+  int x, y, i, j;
+  char tempMoving[24][10];
+  for(i=0;i<24;i++)
     for(j=0;j<10;j++)
-      Moving[i][j]=moving[i][j]; //Creates a temporary array for moving.
-  }
+      tempMoving[i][j] = moving[i][j];
 
-  for(i=0;i<24;i++){
-    for(j=0;j<10;j++){
-      if(Moving[i][j]==1){ //The conditions must be met for the piece to rotate. 
-        if((Moving[i+1][j]==1||Moving[i-1][j]==1)&&(Moving[i][j+1]||Moving[i][j-1])){
-          if(Moving[i+2][j]==1||Moving[i][j+2]==1)
-            continue;
-          rotate=1;
-          pointI=i; //This sets the point around which it will rotate.
-          pointJ=j;
-        }
-        else if(Moving[i+1][j]==1&&Moving[i-1][j]==1){	
-          rotate=1;
-          pointI=i;
-          pointJ=j;
-        }
-        else if(Moving[i][j+1]==1&&Moving[i][j-1]==1){	
-          rotate=1;
-          pointI=i;
-          pointJ=j;
-        }
+  
+  //finds the position of the second detected piece and rotates around it
+  for(i=0;i<24;i++)
+    for(j=0;j<10;j++) {
+      if(tempMoving[i][j]==2){
+        y=i;
+        x=j;
       }
     }
-    break;
-  }
-
-  i=pointI;
-  j=pointJ;
-  if(rotate==1){
-    int tempCross, tempDiag, tempLine;
-    tempCross=Moving[i-1][j];
-    tempDiag=Moving[i-1][j+1];
-    tempLine=Moving[i][j+2];
-
-    Moving[i-1][j]=Moving[i][j-1];
-    Moving[i][j-1]=Moving[i+1][j]; //Rotates all the respective parts around.
-    Moving[i+1][j]=Moving[i][j+1];
-    Moving[i][j+1]=tempCross;
-
-    Moving[i-1][j+1]=Moving[i-1][j-1];
-    Moving[i-1][j-1]=Moving[i+1][j-1];
-    Moving[i+1][j-1]=Moving[i+1][j+1];
-    Moving[i+1][j+1]=tempDiag;
-
-    Moving[i+2][j]=Moving[i][j+2];
-    Moving[i][j+2]=tempLine;
-  }
-
-  for(i=0;i<24;i++){
-    for(j=0;j<10;j++){
-      if(Moving[i][j]==1){
-        if(Moving[i][j]==fixed[i][j]) //Checks if the rotate is valid.
-          validRotate=0;
+  int corner_x = x-2;
+  int corner_y = y-2;
+  
+  //rotates it like a 5x5 matrix
+  for(i=0;i<5;i++)
+    for(j=0;j<5;j++){
+      if(moving[corner_y+j][corner_x+4-i]){
+        if(corner_y+i>23)return;
+        if(corner_x+j>9)return;
+        if(corner_x+j<0)return;
+        if(fixed[corner_y+i][corner_x+j])return;
       }
+      tempMoving[corner_y+i][corner_x+j] = moving[corner_y+j][corner_x+4-i];   
     }
-  }
-
-  if(validRotate==1){
-    for(i=0;i<24;i++){
-      for(j=0;j<10;j++) //Sets the moving array to the temp array so it is turned.
-        moving[i][j]=Moving[i][j];
-    }
-  }
-
-  return;
+    
+  for(i=0;i<24;i++)
+    for(j=0;j<10;j++)
+      moving[i][j] = tempMoving[i][j];
+  
 }
+
+void drop() {
+  bool cont=1;
+  int tempFixed[24][10];
+  for(int i=0;i<24;i++){
+    for(int j=0;j<10;j++){
+      tempFixed[i][j]=fixed[i][j];}}
+  while(cont){
+    
+    for(int i=0;i<24;i++){
+      for(int j=0;j<10;j++){
+        if(!(tempFixed[i][j]==fixed[i][j])){
+          cont=0;  }}}
+    mergeBoard();
+    clock();
+  }
+}
+  
