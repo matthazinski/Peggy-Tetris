@@ -21,7 +21,7 @@ boolean pushDownRotate;
 int fixed[24][10] = {0};   /* Blocks that are not moving */
 int moving[24][10] = {0}; /* The moving block */
 int combined[24][10] = {0}; /* What to display on the board */
-int displayBoard[25][25]; /* Same as combined, but padded to take up the whole board */
+char displayBoard[25][25] = {0}; /* Same as combined, but padded to take up the whole board */
 int points = 0;
 boolean gamePlaying;
 
@@ -64,12 +64,12 @@ char off[25][25] = {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                  {0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -112,44 +112,52 @@ void setup() {
 //    memset(moving, 0, sizeof(int) * 24 * 10);
 //    memset(fixed, 0, sizeof(int) * 24 * 10);
 //    memset(combined, 0, sizeof(int) * 24 * 10);
+
+//    // Set-up the tetris game
+//    for (int i = 0; i < 25; i++) {
+//      for (int j = 0; j < 25; j++) {
+//        displayBoard[i][j] = 0;
+//      }
+//    }
 }
 
 
 void loop() {
+    //Serial.println("hi!");
     pushDownLeft = false;
     pushDownRight = false;
     pushDownRotate = false;
     //Serial.print("Left: ");
     //Serial.println(buttonLeft);   
-  
+
     // Display title until user input
-    while((!pushDownLeft) && (!pushDownRight) && (!pushDownRotate)) {
-      setFrameFromBoard(titleScreen);
-      getUserInput();
-    }    
-  
-    
-    // Set-up the tetris game
-    for (int i = 0; i < 25; i++) {
-      for (int j = 0; j < 25; j++) {
-        displayBoard[i][j] = 0;
-      }
-    }
+    setFrameFromBoard(titleScreen);
+//    while((!pushDownLeft) && (!pushDownRight) && (!pushDownRotate)) {
+//      getUserInput();   
+//    }
    
-    setFrameFromIntBoard(displayBoard);
+
     unsigned long int nextClock = millis() + 2000;
     gamePlaying = true;
-    
+    //setFrameFromBoard(titleScreen);
+    //setFrameFromIntBoard(displayBoard);
     // Loop through until the user loses
-//    while (gamePlaying) {
-//      // Check to see if 
-//      if (abs(millis() - nextClock) < 20) {
-//        setRandomTile();
-//        mergeBoard();
-//        setFrameFromIntBoard(displayBoard);
-//        nextClock = nextClock + 2000;
-//      }
-//    }
+    
+    memset(displayBoard, 15, sizeof(char) * 25 * 25);
+    
+    while (true) {
+      
+      setFrameFromBoard(displayBoard);
+      // Check to see if
+
+      //setRandomTile();
+      //mergeBoard();
+      if (millis() > nextClock) {
+        setRandomTile();
+        mergeBoard();
+        nextClock = nextClock + 2000;
+      }
+    }
 
 
     
@@ -398,7 +406,7 @@ void mergeBoard() {
   int j;
   for (i = 0; i < 24; i++) {
     for (j = 0; j < 10; j++) {
-      combined[i][j] = (fixed[i][j] || moving[i][j]);
+      combined[i][j] = fixed[i][j] + moving[i][j];
       displayBoard[i][j] = combined[i][j];
     }
   }
