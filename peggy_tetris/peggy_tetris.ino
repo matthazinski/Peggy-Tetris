@@ -18,11 +18,12 @@ boolean pushDownLeft;
 boolean pushDownRight;
 boolean pushDownRotate;
 
-int fixed[24][10];   /* Blocks that are not moving */
-int moving[24][10]; /* The moving block */
-int combined[24][10]; /* What to display on the board */
+int fixed[24][10] = {0};   /* Blocks that are not moving */
+int moving[24][10] = {0}; /* The moving block */
+int combined[24][10] = {0}; /* What to display on the board */
 int displayBoard[25][25]; /* Same as combined, but padded to take up the whole board */
 int points = 0;
+boolean gamePlaying;
 
 
 Peggy2 peggyFrame; /* Stores all pixels displayed on the Peggy */
@@ -101,63 +102,54 @@ Tetromino T = {3, 4,  3, 5,  2, 5,  3, 6};
 
 
 void setup() {
-
-    //titleScreen[25][25]  /* "TETRIS \n START" */
-    //peggyFrame.Peggy_HardwareInit();
-    //peggyFrame.Peggy_Clear();
     peggyFrame.HardwareInit();
     peggyFrame.Clear();
-    setFrameFromBoard(titleScreen);
-    //pinMode(buttonPinLeft, INPUT);
-    //pinMode(buttonPinRight, INPUT);
-    //pinMode(buttonPinRotate, INPUT);
     buttonLeft = 0;
     buttonRight = 0;
     buttonRotate = 0;
+    gamePlaying = false;
     //Serial.begin(9600);
+//    memset(moving, 0, sizeof(int) * 24 * 10);
+//    memset(fixed, 0, sizeof(int) * 24 * 10);
+//    memset(combined, 0, sizeof(int) * 24 * 10);
 }
 
 
 void loop() {
-    unsigned long int tmp = millis();
     pushDownLeft = false;
     pushDownRight = false;
     pushDownRotate = false;
     //Serial.print("Left: ");
     //Serial.println(buttonLeft);   
-      
+  
     // Display title until user input
-    setFrameFromBoard(titleScreen);    
     while((!pushDownLeft) && (!pushDownRight) && (!pushDownRotate)) {
       setFrameFromBoard(titleScreen);
       getUserInput();
     }    
-    
+  
     
     // Set-up the tetris game
-    clearArray(moving);
-    clearArray(fixed);
-    clearArray(combined);
     for (int i = 0; i < 25; i++) {
       for (int j = 0; j < 25; j++) {
         displayBoard[i][j] = 0;
       }
     }
-    
-    setFrameFromBoard(displayBoard);
+   
+    setFrameFromIntBoard(displayBoard);
     unsigned long int nextClock = millis() + 2000;
-    boolean gamePlaying = true;
+    gamePlaying = true;
     
     // Loop through until the user loses
-    while (gamePlaying) {
-      // Check to see if 
-      if (abs(millis() - nextClock) < 20) {
-        setRandomTile();
-        mergeBoard();
-        setFrameFromBoard(displayBoard);
-        nextClock = nextClock + 2000;
-      }
-    }
+//    while (gamePlaying) {
+//      // Check to see if 
+//      if (abs(millis() - nextClock) < 20) {
+//        setRandomTile();
+//        mergeBoard();
+//        setFrameFromIntBoard(displayBoard);
+//        nextClock = nextClock + 2000;
+//      }
+//    }
 
 
     
@@ -189,30 +181,28 @@ void setFrameFromBoard(char board[25][25]) {
         
     /* This takes the board[][] parameter (which must be a 25x25 array) and
      * draws it on the Peggy display */
-    //peggyFrame.Peggy_Clear();
     peggyFrame.Clear();
     for (int i = 0; i <= 24; i++) {
         for (int j = 0; j <= 24; j++) {
-            //peggyFrame.Peggy_WritePoint(i, j, board[i][j]);
             peggyFrame.WritePoint(i, j, board[j][i]);
         }
     }  
-    //peggyFrame.Peggy_RefreshAll(1);
     peggyFrame.RefreshAll(1);  
 }
 
-void setFrameFromBoard(int board[25][25]) {
+void setFrameFromIntBoard(int board[25][25]) {
     peggyFrame.Clear();
     for (int i = 0; i <= 24; i++) {
       for (int j = 0; j <= 24; j++) {
         if (board[i][j]) {
-          peggyFrame.WritePoint(i, j, 15);
+          peggyFrame.WritePoint(j, i, 15);
         }
         else {
-          peggyFrame.WritePoint(i, j, 0);
+          peggyFrame.WritePoint(j, i, 0);
         }
       }
     }
+    peggyFrame.RefreshAll(1);
 }
 
 void getUserInput() {
