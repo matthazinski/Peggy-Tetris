@@ -5,8 +5,9 @@
 
 const int buttonPinLeft = 1;      // b2  left    24  ADC1
 const int buttonPinRight = 4;     // b5  right   27  ADC4 
-const int buttonPinRotate = 2;    // b3  down    25  ADC2
+const int buttonPinRotate = 3;    // b3  down    25  ADC2
 const int THRESHOLD = 512;
+const int DELAY = 150;
 
 // Holds analog readings of button pins
 int buttonRight;
@@ -25,6 +26,7 @@ char displayBoard[25][25] = {0}; /* Same as combined, but padded to take up the 
 int points = 0;
 boolean gamePlaying;
 unsigned long int nextClock;
+unsigned long int nextInput;
 
 
 Peggy2 peggyFrame; /* Stores all pixels displayed on the Peggy */
@@ -111,41 +113,22 @@ void setup() {
     pushDownLeft = false;
     pushDownRight = false;
     pushDownRotate = false;
-    nextClock = millis() + 4000;
-    //while (nextClock > millis()) {
+
     while(!pushDownLeft && !pushDownRight && !pushDownRotate) {
       setFrameFromBoard(titleScreen);
       getUserInput();
     }
     gamePlaying = true;
     setRandomTile();
-    //Serial.begin(9600);
-//    memset(moving, 0, sizeof(int) * 24 * 10);
-//    memset(fixed, 0, sizeof(int) * 24 * 10);
-//    memset(combined, 0, sizeof(int) * 24 * 10);
-
-//    // Set-up the tetris game
-//    for (int i = 0; i < 25; i++) {
-//      for (int j = 0; j < 25; j++) {
-//        displayBoard[i][j] = 0;
-//      }
-//    }
+    nextClock = millis();
+    nextInput = millis();
 }
 
 
 void loop() {
-    //Serial.println("hi!");
 
-
-    // Display title until user input
-    //setFrameFromBoard(titleScreen);
-//    while((!pushDownLeft) && (!pushDownRight) && (!pushDownRotate)) {
-//      getUserInput();   
-//    }
-
-    
     // Loop through until the user loses
-    if(nextClock < millis() && gamePlaying) {
+    if(nextInput < millis() && gamePlaying) {
       // Handle user input events
       getUserInput();
       if(pushDownLeft) {
@@ -155,15 +138,19 @@ void loop() {
         moveRight();
       }
       // TODO fix rotate() 
-      mergeBoard();
-      clock();
-
-      if(checkBoard()) { //Detect loses
+      if(nextClock < millis() && gamePlaying) {
         mergeBoard();
-        gamePlaying = false;
+        clock();
+  
+        if(checkBoard()) { //Detect loses
+          mergeBoard();
+          gamePlaying = false;
+        }
+        nextClock = millis() + 2 * DELAY;
       }
-
-      nextClock = millis() + 500;
+      nextInput = millis() + DELAY;
+      
+      
     }
     
       setFrameFromBoard(displayBoard); 
